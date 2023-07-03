@@ -1,0 +1,173 @@
+Based on the requirements, here are the core classes, functions, and methods that will be necessary:
+
+1. Frontend:
+   - App: The main component that renders the entire application.
+   - InputSection: A component that renders an input section.
+   - OutputSection: A component that renders an output section.
+   - SimulationResult: A component that renders the result of the simulation.
+   - Graph: A component that renders a stacked line graph.
+   - ErrorsAndWarnings: A component that displays errors and warnings.
+   - ScenarioList: A component that displays a list of saved scenarios.
+   - ScenarioItem: A component that renders an item in the scenario list.
+   - ScenarioForm: A component that allows the user to save a scenario.
+   - SimulationService: A service that handles communication with the backend and runs the simulation.
+   - ApiService: A service that handles API requests to the backend.
+   - PDFService: A service that handles exporting scenarios to PDF.
+
+2. Backend:
+   - Server: The main server file that handles API requests.
+   - SimulationController: A controller that handles the simulation request.
+   - SimulationService: A service that runs the simulation.
+   - ValidationService: A service that validates the input parameters.
+   - PDFService: A service that generates PDF reports.
+
+Now let's proceed with the file structure and code implementation.
+
+1. Frontend:
+
+**index.js**
+```jsx
+import React from 'react';
+import ReactDOM from 'react-dom';
+import App from './App';
+
+ReactDOM.render(<App />, document.getElementById('root'));
+```
+
+**App.js**
+```jsx
+import React, { useState } from 'react';
+import InputSection from './InputSection';
+import OutputSection from './OutputSection';
+import SimulationResult from './SimulationResult';
+import ErrorsAndWarnings from './ErrorsAndWarnings';
+import ScenarioList from './ScenarioList';
+import ScenarioForm from './ScenarioForm';
+import SimulationService from './SimulationService';
+
+const App = () => {
+  const [simulationResult, setSimulationResult] = useState(null);
+  const [errors, setErrors] = useState([]);
+  const [scenarios, setScenarios] = useState([]);
+
+  const runSimulation = (parameters) => {
+    const result = SimulationService.runSimulation(parameters);
+    setSimulationResult(result);
+  };
+
+  const saveScenario = (scenario) => {
+    setScenarios([...scenarios, scenario]);
+  };
+
+  const resetScenario = () => {
+    setSimulationResult(null);
+    setErrors([]);
+  };
+
+  return (
+    <div>
+      <InputSection onRunSimulation={runSimulation} onResetScenario={resetScenario} />
+      <OutputSection>
+        {simulationResult ? (
+          <>
+            <SimulationResult result={simulationResult} />
+            <Graph data={simulationResult.assets} />
+            <Graph data={simulationResult.cashFlow} />
+          </>
+        ) : null}
+      </OutputSection>
+      <ErrorsAndWarnings errors={errors} />
+      <ScenarioList scenarios={scenarios} />
+      <ScenarioForm onSaveScenario={saveScenario} />
+    </div>
+  );
+};
+
+export default App;
+```
+
+**InputSection.js**
+```jsx
+import React, { useState } from 'react';
+
+const InputSection = ({ onRunSimulation, onResetScenario }) => {
+  const [parameters, setParameters] = useState({});
+
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    setParameters({ ...parameters, [name]: value });
+  };
+
+  const handleRunSimulation = () => {
+    onRunSimulation(parameters);
+  };
+
+  const handleResetScenario = () => {
+    setParameters({});
+    onResetScenario();
+  };
+
+  return (
+    <div>
+      {/* Render input fields and buttons */}
+    </div>
+  );
+};
+
+export default InputSection;
+```
+
+**OutputSection.js**
+```jsx
+import React from 'react';
+
+const OutputSection = ({ children }) => {
+  return (
+    <div>
+      {/* Render output section */}
+      {children}
+    </div>
+  );
+};
+
+export default OutputSection;
+```
+
+**SimulationResult.js**
+```jsx
+import React from 'react';
+
+const SimulationResult = ({ result }) => {
+  return (
+    <div>
+      {/* Render simulation result */}
+    </div>
+  );
+};
+
+export default SimulationResult;
+```
+
+**Graph.js**
+```jsx
+import React from 'react';
+
+const Graph = ({ data }) => {
+  return (
+    <div>
+      {/* Render graph */}
+    </div>
+  );
+};
+
+export default Graph;
+```
+
+**ErrorsAndWarnings.js**
+```jsx
+import React from 'react';
+
+const ErrorsAndWarnings = ({ errors }) => {
+  return (
+    <div>
+     
