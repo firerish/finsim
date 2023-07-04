@@ -1,37 +1,31 @@
-Create a React app with a node.js backend.
+Create a webpage for a financial simulator, as a single page static website, using html, css, react and javascript.
 
-The app is a financial simulator.
+The UI has four input sections and three output sections. 
 
-It has four input sections and three output sections. Parameters in these sections will have an intuitive format, for example positive whole integers for numbers like values and years, alphanumeric strings for names, drop-down boxes for options. The only negative number allowed is the one that specifies the market drop for the market crash event speficied below.
+In the first input section the user enters their current financial situation. This includes current savings in cash, retirement accounts and investments, and also their current age, target retirement age, target final age, and target cash savings.
 
-The first input section allows the user to enter their current financial situation, which includes current savings, money currently in their retirement account, current investments, current age, target retirement age, target final age, and target cash savings.
+In the second input section the user specifies how much of their disposable income (in percentage) they want to invest in different investment types (pension, equity, ETFs, or investment trusts), and in what order to drawdawn from these investments when the need arises to cover expenses. The order will be specified by assigning a position to each item ("first", "second", etc). Use a drop-down for that.
 
-The second input section allows the user to specify how much of their disposable income they want to invest in different investment types (pension, equity, ETFs, or investment trusts), and in what order to drawdawn from these investments when the need arises to cover expenses. The order will be specified by assigning a number to each item, 1 being the first choice to drawdown from, 2 being the second choice once the first one is depleted, etc. Each one has to be a different order number, and they have to be consecutive, starting at 1. You can use a drop-down for that.
+In the third input section the user adds life events that have a type, name, start year and end year, and additional optional parameters. Life events can overlap in time, and start or end at the same year. Life events can have an optional money value and a yearly rate of growth (when not specified, the inflation rate is used). 
 
-The third input section ellows the user to add life events that have a start year and an end year. Life events can overlap in time, start or end at the same year. They are independent of each other, except for the real estate and he mortgage events specified below.
+These are the possible life event types: A job income (specifying the salary, and optional pension company match), RSUs from that job, a rent income, a non-taxable income, a real estate event (ownership of a property, where the starting year is the purchase and the end year is the sale), a mortgage event (specifying yearly repayment and the loan rate, and should have the same name as a real estate event and match the start year of that event), an expense event, or a stock market event (like a crash). A real estate event can have one or no corresponding mortgage event, but a mortgage event must have a corresponding real estate event.
 
-Life events also have an optional value and a yearly rate of growth (when not specified, the inflation rate is used). 
+In the fourth input section the user can specify economic parameters like rate of inflation, expected yearly growth of different asset types (stock, pension, etc), and optionally specify a variance for these values (standard deviation). All these values should be non-negative percentages.
 
-A life event can be a job (specifying the salary, shares, bonus, pension company match), a rent income, a non-taxable income, a real estate event (ownership of a property), a mortgage event (specifying yearly repayment and the loan rate, and should have the same name as a real estate event and match the start year of that event), an expense event, or a stock market event (like a crash). All events have a name that the user can specify. A real estate event can have one corresponding (by name) mortgage event, but a mortgage event must have a corresponding real estate event.
+Parameters in these sections will have an intuitive format, for example positive whole integers for numbers like values and years, alphanumeric strings for names, drop-down boxes for options. The only negative number allowed is the one that specifies the market drop for the market crash event speficied above.
 
-The fourth input section allows the user to specify economic parameters like rate of inflation, expected yearly growth of different asset types (stock, pension, etc), optionally specifying a variance for these values (standard deviation). All these values should be positive percentages.
-
-After completing all the four previous input sections, which constitute the parameters for the simmulation, the user can run the simulation by clicking a button "run simulation". All the data provided by the user will be sent to the backend in a json format.
-
-The simulation will be run in the node.js backend. The code to run the simulation already exists and doesn't need to be provided by you. Only provide the scaffolding around it to get the parameters provided by the user through the React frontend and to provide the data (in json format) required for the frontend to show the results.
+After completing all the four previous input sections, which constitute the parameters for the simmulation, the user can run the simulation by clicking a button "run simulation". This will run a javascript function called "run". You don't need to provide the body of that function. Make sure everything else here (input and output parameters) is accessible through getters and setters so that the function can interact with the UI.
 
 Once the simulation finishes, the frontend presents three output sections.
 
-The first output section will be an assessment of the user-provided scenario. If the user provided variances for the enonomic parameters, the result will be a percentage representing the likelyhood of success of the scenario (for example "Likelihood of success: 90%"). If the user didn't provide variances, the simulation shows "Success" if the simulation finished with money left at the target final date, or "Failure" otherwise.
+The first output section will be an assessment of the user-provided scenario. This is an alphanumeric string that the "run" function will set.
 
-The second output section will be a stacked line graph of the assets year by year (starting at the current age and ending at the target final date), showing the accumulated net worth in terms of cash, real estate, and each investment type.
+The second output section will be a stacked line graph of the assets year by year (starting at the current age and ending at the target final date), showing the accumulated net worth in terms of cash, real estate, and each investment type including pensions.
 
-The third output section will be a stacked line graph of the cash flow year by year (like the previous one), showing the different sources of income and expenses.
-
-The user will then be able to go back to the input sections, edit the information, and run the simulation again.
-
-Use any libraries or frameworks for this project as long as they are open source.
-
-The whole frontend should feel modern, easy to use, intuitive, and have a free flow between the sections, so the user can go back and forth and play around with the scenarios and see the result of each change. Errors from the backend will be part of the json response and should be shown to the user in an unobstrusive way, for example in a separate "Errors and warnings" section that the user can check at any time.
+The third output section will be a stacked line graph of the cash flow year by year (starting at the current age and ending at the target final date), showing the different sources of income, with an additional non-stacked dotted line showing expenses.
 
 The user will be able to save the scenario with a name, and load scenarios by name (present a list of saved scenarios to select from). The user will also be able to export the scenarios with the results in pdf format. The user will also be able to reset the scenario and remove all events, but they need to confirm that they agree to lose all the information, in case they haven't saved it.
+
+The whole frontend should feel modern, easy to use, intuitive, and have a free flow between the sections, so the user can go back and forth and play around with the scenarios, edit the information, add or remove events, run the simulation and see the result of each change. Errors from the backend will be part of the json response and should be shown to the user in an unobstrusive way, for example in an "Errors and warnings" banner that the user can hide or un-hide at any time.
+
+Use any libraries or frameworks for this project as long as they are open source.
