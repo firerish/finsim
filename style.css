@@ -8,7 +8,7 @@ body {
 
 .container {
   display: flex;
-  justify-content: center;
+  flex-direction: column; /* Aligns .input-section vertically */
   align-items: center;
   height: 100vh;
   margin: auto;
@@ -22,21 +22,41 @@ body {
 }
 
 .input-section {
-  margin-bottom: 20px;
+  display: flex; /* Aligns input fields horizontally */
+  flex-direction: row; /* makes children line up in a row */
+  /* justify-content: space-between; /* spaces out the children evenly */
+  /* align-items: center; /* centers the children vertically */
+  flex-wrap: wrap; /* Optional, allows inputs to wrap to next line on smaller screens */
+  gap: 20px; /* Optional, for space between input fields */
+  margin-bottom: 10px;
 }
 
-.input-section input, .input-section select {
-  width: 100%;
-  padding: 10px;
-  margin-top: 5px;
+.input-field {
+  display: flex;
+  flex-direction: column; /* Each wrapper will have its label on top of its input */
+}
+
+.input-field label, .input-field input, .input-field select {
+  width: auto; /* adjust as needed */
+  padding: 5px;
+  margin-top: 0px;
+  margin-right: 5px; /* you might need some space between them */
+  flex-grow: 0; /* Allows inputs to take up equal amount of space */
+}
+
+.button-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
 }
 
 button {
   padding: 10px 20px;
   background-color: #4caf50;
   color: white;
-  border: none;
+  border: grey;
   cursor: pointer;
+  margin: 5px;
 }
 
 #output {
@@ -47,19 +67,19 @@ button {
 .error-banner {
   position: absolute;
   top: 0;
-  right: 0;
-  width: 300px;
+  left: 50;
+  width: 500px;
   background-color: #f8d7da;
   color: #721c24;
   transition: transform 0.3s ease-in-out;
 }
 
 .error-banner.hide {
-  transform: translateX(100%);
+  transform: translateY(-100%);
 }
 
 .error-banner.show {
-  transform: translateX(0);
+  transform: translateY(0);
 }
 
 .error-icon {
