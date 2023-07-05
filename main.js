@@ -10,18 +10,20 @@ class FinancialPlanner extends React.Component {
 
   getInitialState() {
     return {
-      section1: {
+      startingPosition: {
         currentSavings: 0,
         retirementAccounts: 0,
         investments: 0,
         currentAge: 0,
-        retirementAge: 0,
-        finalAge: 0,
-        targetSavings: 0
       },
 
-      section2: {
-        disposableIncome: 0,
+      targets: {
+        retirementAge: 0,
+        finalAge: 0,
+        targetSavings: 0,
+      },
+
+      allocations: {
         investments: {
           ETFs: 0,
           Equity: 0,
@@ -32,12 +34,12 @@ class FinancialPlanner extends React.Component {
           ETFs: 1,
           Equity: 2,
           Pension: 3,
-          Cash: 4
+          Cash: 4,
         }
 
       },
 
-      section3: {
+      economy: {
         inflation: 0,
         assetGrowth: {
           Equity: 0,
@@ -51,7 +53,7 @@ class FinancialPlanner extends React.Component {
         },
       },
 
-      section4: [
+      events: [
         {
           type: 'job', // 'job', 'rsu', 'rent', etc.
           name: '',
@@ -74,10 +76,10 @@ class FinancialPlanner extends React.Component {
   handleInvestmentChange(type, e) {
     e.persist();  
     this.setState(prevState => ({
-      section2: {
-        ...prevState.section2,
+      allocations: {
+        ...prevState.allocations,
         investments: {
-          ...prevState.section2.investments,
+          ...prevState.allocations.investments,
           [type]: e.target.value
         }
       }
@@ -89,10 +91,10 @@ class FinancialPlanner extends React.Component {
     const value = parseInt(e.target.value, 10);
     if (value >= 0 && value <= 100) {
       this.setState(prevState => ({
-        section3: {
-          ...prevState.section3,
+        economy: {
+          ...prevState.economy,
           assetGrowth: {
-            ...prevState.section3.assetGrowth,
+            ...prevState.economy.assetGrowth,
             [type]: e.target.value
           }
         }
@@ -107,10 +109,10 @@ class FinancialPlanner extends React.Component {
     const value = parseInt(e.target.value, 10);
     if (value >= 0 && value <= 100) {
       this.setState(prevState => ({
-        section3: {
-          ...prevState.section3,
+        economy: {
+          ...prevState.economy,
           assetVariance: {
-            ...prevState.section3.assetVariance,
+            ...prevState.economy.assetVariance,
             [type]: e.target.value
           }
         }
@@ -124,18 +126,18 @@ class FinancialPlanner extends React.Component {
     e.persist();  
     this.setState(prevState => {
       // Find type which currently has the selected order
-      console.log("prev order: "+JSON.stringify(prevState.section2.drawdownOrder));
+      console.log("prev order: "+JSON.stringify(prevState.allocations.drawdownOrder));
       console.log("target.value: "+e.target.value);
-      const otherType = Object.keys(prevState.section2.drawdownOrder).find(key => prevState.section2.drawdownOrder[key] == e.target.value);
+      const otherType = Object.keys(prevState.allocations.drawdownOrder).find(key => prevState.allocations.drawdownOrder[key] == e.target.value);
       console.log("otherType: "+otherType);
 
       return {
-        section2: {
-          ...prevState.section2,
+        allocations: {
+          ...prevState.allocations,
           drawdownOrder: {
-            ...prevState.section2.drawdownOrder,
+            ...prevState.allocations.drawdownOrder,
             [type]: e.target.value, // Set selected type to the selected order
-            ...(otherType ? {[otherType]: prevState.section2.drawdownOrder[type]} : {}) // Swap the order of the other type if it exists
+            ...(otherType ? {[otherType]: prevState.allocations.drawdownOrder[type]} : {}) // Swap the order of the other type if it exists
           }
         }
       }
@@ -144,7 +146,7 @@ class FinancialPlanner extends React.Component {
 
   handleAddLifeEvent = () => {
     this.setState(prevState => ({
-      section4: [...prevState.section4, {
+      events: [...prevState.events, {
         type: '', 
         name: '',
         startYear: 0,
@@ -157,26 +159,27 @@ class FinancialPlanner extends React.Component {
 
   handleRemoveLifeEvent = (index) => {
     this.setState(prevState => {
-      const updatedEvents = [...prevState.section4];
+      const updatedEvents = [...prevState.events];
       updatedEvents.splice(index, 1);
-      return {section4: updatedEvents};
+      return {events: updatedEvents};
     });
   }
 
   handleLifeEventChange(index, property, value) {
     this.setState(prevState => {
-      const updatedEvents = [...prevState.section4];
+      const updatedEvents = [...prevState.events];
       updatedEvents[index][property] = value;
-      return {section4: updatedEvents};
+      return {events: updatedEvents};
     });
   }
 
   runSimulation = () => {
     const params = {
-      section1: this.state.section1,
-      section2: this.state.section2,
-      section3: this.state.section3,
-      section4: this.state.section4,
+      startingPosition: this.state.startingPosition,
+      targets: this.state.targets,
+      allocations: this.state.allocations,
+      economy: this.state.economy,
+      events: this.state.events,
     };
     this.setState({
       simulationResult: run(params),
@@ -193,10 +196,11 @@ class FinancialPlanner extends React.Component {
     const fileHandle = await window.showSaveFilePicker();
     const writable = await fileHandle.createWritable();
     const scenario = {
-      section1: this.state.section1,
-      section2: this.state.section2,
-      section3: this.state.section3,
-      section4: this.state.section4,
+      startingPosition: this.state.startingPosition,
+      targets: this.state.targets,
+      allocations: this.state.allocations,
+      economy: this.state.economy,
+      events: this.state.events,
     };
     await writable.write(JSON.stringify(scenario));
     await writable.close();
@@ -208,10 +212,11 @@ class FinancialPlanner extends React.Component {
     const contents = await file.text();
     const scenario = JSON.parse(contents);
     this.setState({
-      section1: scenario.section1,
-      section2: scenario.section2,
-      section3: scenario.section3,
-      section4: scenario.section4,
+      startingPosition: scenario.startingPosition,
+      allocations: scenario.allocations,
+      targets: scenario.targets,
+      economy: scenario.economy,
+      events: scenario.events,
     });
   }
 
@@ -330,8 +335,8 @@ class FinancialPlanner extends React.Component {
 
 
   render() {
-    const assets = Object.keys(this.state.section3.assetGrowth);
-    const investmentTypes = Object.keys(this.state.section2.investments);
+    const assets = Object.keys(this.state.economy.assetGrowth);
+    const investmentTypes = Object.keys(this.state.allocations.investments);
     const orderOptions = Array.from({length: investmentTypes.length}, (_, i) => i + 1); // Generate order options based on number of types
     const errorBannerClass = this.state.showErrorBanner ? 'show' : 'hide';
 
@@ -352,19 +357,19 @@ class FinancialPlanner extends React.Component {
         <div className="input-section">
           <div className="input-field">
             <label for="currentSavings">Savings in cash</label>
-            <input id="currentSavings" type="number" placeholder="Current savings in cash" value={this.state.section1.currentSavings} onChange={(e) => {const newValue = e.target.value; this.setState(prevState => ({section1: {...prevState.section1, currentSavings: newValue}}))}} />
+            <input id="currentSavings" type="number" placeholder="Current savings in cash" value={this.state.startingPosition.currentSavings} onChange={(e) => {const newValue = e.target.value; this.setState(prevState => ({startingPosition: {...prevState.startingPosition, currentSavings: newValue}}))}} />
           </div>
           <div className="input-field">
             <label for="retirementAccounts">Retirement accounts</label>
-            <input id="retirementAccounts" type="number" placeholder="Current savings in retirement accounts" value={this.state.section1.retirementAccounts} onChange={(e) => {const newValue = e.target.value; this.setState(prevState => ({section1: {...prevState.section1, retirementAccounts: newValue}}))}} />
+            <input id="retirementAccounts" type="number" placeholder="Current savings in retirement accounts" value={this.state.startingPosition.retirementAccounts} onChange={(e) => {const newValue = e.target.value; this.setState(prevState => ({startingPosition: {...prevState.startingPosition, retirementAccounts: newValue}}))}} />
           </div>
           <div className="input-field">
             <label for="investments">Investments</label>
-            <input id="investments" type="number" placeholder="Current investments" value={this.state.section1.investments} onChange={(e) => {const newValue = e.target.value; this.setState(prevState => ({section1: {...prevState.section1, investments: newValue}}))}} />
+            <input id="investments" type="number" placeholder="Current investments" value={this.state.startingPosition.investments} onChange={(e) => {const newValue = e.target.value; this.setState(prevState => ({startingPosition: {...prevState.startingPosition, investments: newValue}}))}} />
           </div>
           <div className="input-field">
             <label for="currentAge">Current age</label>
-            <input id="currentAge" type="number" placeholder="Current age" value={this.state.section1.currentAge} onChange={(e) => {const newValue = e.target.value; this.setState(prevState => ({section1: {...prevState.section1, currentAge: newValue}}))}} />
+            <input id="currentAge" type="number" placeholder="Current age" value={this.state.startingPosition.currentAge} onChange={(e) => {const newValue = e.target.value; this.setState(prevState => ({startingPosition: {...prevState.startingPosition, currentAge: newValue}}))}} />
           </div>
         </div>
 
@@ -372,15 +377,15 @@ class FinancialPlanner extends React.Component {
         <div className="input-section">
           <div className="input-field">
             <label for="retirementAge">Retirement Age</label>
-            <input id="retirementAge" type="number" placeholder="Target retirement age" value={this.state.section1.retirementAge} onChange={(e) => {const newValue = e.target.value; this.setState(prevState => ({section1: {...prevState.section1, retirementAge: newValue}}))}} />
+            <input id="retirementAge" type="number" placeholder="Target retirement age" value={this.state.targets.retirementAge} onChange={(e) => {const newValue = e.target.value; this.setState(prevState => ({targets: {...prevState.targets, retirementAge: newValue}}))}} />
           </div>
           <div className="input-field">
             <label for="targetAge">Target age</label>
-            <input id="targetAge" type="number" placeholder="Target final age" value={this.state.section1.finalAge} onChange={(e) => {const newValue = e.target.value; this.setState(prevState => ({section1: {...prevState.section1, finalAge: newValue}}))}} />
+            <input id="targetAge" type="number" placeholder="Target final age" value={this.state.targets.finalAge} onChange={(e) => {const newValue = e.target.value; this.setState(prevState => ({targets: {...prevState.targets, finalAge: newValue}}))}} />
           </div>
           <div className="input-field">
             <label for="emergencyStash">Target emergency stash</label>
-            <input id="emergencyStash" type="number" placeholder="Target cash savings" value={this.state.section1.targetSavings} onChange={(e) => {const newValue = e.target.value; this.setState(prevState => ({section1: {...prevState.section1, targetSavings: newValue}}))}} />
+            <input id="emergencyStash" type="number" placeholder="Target cash savings" value={this.state.targets.targetSavings} onChange={(e) => {const newValue = e.target.value; this.setState(prevState => ({targets: {...prevState.targets, targetSavings: newValue}}))}} />
           </div>
         </div>
 
@@ -390,9 +395,9 @@ class FinancialPlanner extends React.Component {
             <div key={type} className="input-field">
               <label for={type}>{type}</label>
               <div>
-                <input id={type} type="number" placeholder="Investment (%)" value={this.state.section2.investments[type]} onChange={this.handleInvestmentChange.bind(this, type)} />
+                <input id={type} type="number" placeholder="Investment (%)" value={this.state.allocations.investments[type]} onChange={this.handleInvestmentChange.bind(this, type)} />
                 {/* drawdown order... */}
-                <select value={this.state.section2.drawdownOrder[type]} onChange={this.handleDrawdownOrderChange.bind(this, type)}>
+                <select value={this.state.allocations.drawdownOrder[type]} onChange={this.handleDrawdownOrderChange.bind(this, type)}>
                   {orderOptions.map((option, index) => <option key={index} value={option}>{option}</option>)}
                 </select>
               </div>
@@ -404,13 +409,13 @@ class FinancialPlanner extends React.Component {
         <div className="input-section">
           <div className="input-field">
             <label for="inflation">Inflation</label>
-            <input id="inflation" type="number" placeholder="Inflation Rate (%)" value={this.state.section3.inflation} onChange={(e) => {const newValue = e.target.value; this.setState(prevState => ({section3: {...prevState.section3, inflation: newValue}}))}} />
+            <input id="inflation" type="number" placeholder="Inflation Rate (%)" value={this.state.economy.inflation} onChange={(e) => {const newValue = e.target.value; this.setState(prevState => ({economy: {...prevState.economy, inflation: newValue}}))}} />
           </div>
           {assets.map(asset => (
             <div key={asset} className="input-field">
               <label for={asset}>{asset}</label>
-              <input id={asset} type="number" placeholder="Growth (%)" value={this.state.section3.assetGrowth[asset]} onChange={this.handleAssetGrowthChange.bind(this, asset)} />
-              <input type="number" placeholder="Variance (%)" value={this.state.section3.assetVariance[asset]} onChange={this.handleAssetVarianceChange.bind(this, asset)} />
+              <input id={asset} type="number" placeholder="Growth (%)" value={this.state.economy.assetGrowth[asset]} onChange={this.handleAssetGrowthChange.bind(this, asset)} />
+              <input type="number" placeholder="Variance (%)" value={this.state.economy.assetVariance[asset]} onChange={this.handleAssetVarianceChange.bind(this, asset)} />
             </div>
           ))}
         </div>
@@ -418,7 +423,7 @@ class FinancialPlanner extends React.Component {
         <h3>Life Events</h3>
         <div className="input-section">
           <div align="center">
-              {this.state.section4.map((event, index) => (
+              {this.state.events.map((event, index) => (
                 <div key={index}>
                   <select value={event.type} onChange={(e) => this.handleLifeEventChange(index, 'type', e.target.value)}>
                     <option value="job">Job Income</option>
@@ -429,7 +434,7 @@ class FinancialPlanner extends React.Component {
                   <input type="text" placeholder="Name" value={event.name} onChange={(e) => this.handleLifeEventChange(index, 'name', e.target.value)} />
                   <input type="number" placeholder="Start Year" value={event.startYear} onChange={(e) => {const newValue = e.target.value; this.handleLifeEventChange(index, 'startYear', parseInt(newValue, 10))}} />
                   <input type="number" placeholder="End Year" value={event.endYear} onChange={(e) => {const newValue = e.target.value; this.handleLifeEventChange(index, 'endYear', parseInt(newValue, 10))}} />
-                  {this.state.section4.length > index && (
+                  {this.state.events.length > index && (
                     <button onClick={() => this.handleRemoveLifeEvent(index)}>Remove Event</button>
                   )}
                 </div>
