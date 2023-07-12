@@ -6,6 +6,7 @@ class FinancialPlanner extends React.Component {
     this.resetState = this.resetState.bind(this);
     this.assetChartRef = React.createRef();
     this.cashflowChartRef = React.createRef();
+    this.simulator = new FinancialSimulator();
   }
 
   getInitialState() {
@@ -13,7 +14,8 @@ class FinancialPlanner extends React.Component {
       startingPosition: {
         currentSavings: 0,
         retirementAccounts: 0,
-        investments: 0,
+        equity: 0,
+        ETFs: 0,
         currentAge: 0,
       },
 
@@ -64,9 +66,11 @@ class FinancialPlanner extends React.Component {
         },
       ],
 
-      simulationResult: '',
-      simulationData: [], // Array to hold the data for the assets chart
-      cashFlowData: [], // Array to hold the data for the cash flow chart
+      simulationResult: {
+        forecast: '',
+        assetsData: [], // Array to hold the data for the assets chart
+        cashFlowData: [], // Array to hold the data for the cash flow chart
+      }
 
       errors: [], // Array to hold error messages
       showErrorBanner: false // To control the visibility of the error banner
@@ -126,10 +130,7 @@ class FinancialPlanner extends React.Component {
     e.persist();  
     this.setState(prevState => {
       // Find type which currently has the selected order
-      console.log("prev order: "+JSON.stringify(prevState.allocations.drawdownOrder));
-      console.log("target.value: "+e.target.value);
       const otherType = Object.keys(prevState.allocations.drawdownOrder).find(key => prevState.allocations.drawdownOrder[key] == e.target.value);
-      console.log("otherType: "+otherType);
 
       return {
         allocations: {
@@ -182,7 +183,7 @@ class FinancialPlanner extends React.Component {
       events: this.state.events,
     };
     this.setState({
-      simulationResult: run(params),
+      simulationResult: simulator.run(params),
     });
   }
 
@@ -235,15 +236,15 @@ class FinancialPlanner extends React.Component {
     this.assetChart = new Chart(ctx, {
       type: 'line',
       data: {
-        labels: this.state.simulationData.map(data => data.year),
+        labels: this.state.assetsData.map(data => data.year),
         datasets: [{
           label: 'Cash',
-          data: this.state.simulationData.map(data => data.cash),
+          data: this.state.assetsData.map(data => data.cash),
           borderColor: '#8884d8',
           fill: false
         }, {
           label: 'Real Estate',
-          data: this.state.simulationData.map(data => data.realEstate),
+          data: this.state.assetsData.map(data => data.realEstate),
           borderColor: '#82ca9d',
           fill: false
         }]
@@ -274,17 +275,17 @@ class FinancialPlanner extends React.Component {
       data: {
         datasets: [{
           label: 'Job Income',
-          data: this.state.simulationData.map(item => ({x: item.year, y: item.jobIncome})),
+          data: this.state.cashflowData.map(item => ({x: item.year, y: item.jobIncome})),
           backgroundColor: '#8884d8',
           fill: 'origin',
         }, {
           label: 'Rent Income',
-          data: this.state.simulationData.map(item => ({x: item.year, y: item.rentIncome})),
+          data: this.state.cashflowData.map(item => ({x: item.year, y: item.rentIncome})),
           backgroundColor: '#82ca9d',
           fill: '-1',
         }, {
           label: 'Expenses',
-          data: this.state.simulationData.map(item => ({x: item.year, y: item.expenses})),
+          data: this.state.cashflowData.map(item => ({x: item.year, y: item.expenses})),
           backgroundColor: '#ff7300',
           borderDash: [5, 5],
           fill: false,
@@ -310,16 +311,16 @@ class FinancialPlanner extends React.Component {
   }
 
   updateAssetChart() {
-    this.assetChart.data.labels = this.state.simulationData.map(data => data.year);
-    this.assetChart.data.datasets[0].data = this.state.simulationData.map(data => data.cash);
-    this.assetChart.data.datasets[1].data = this.state.simulationData.map(data => data.realEstate);
+    this.assetChart.data.labels = this.state.assetsData.map(data => data.year);
+    this.assetChart.data.datasets[0].data = this.state.assetsData.map(data => data.cash);
+    this.assetChart.data.datasets[1].data = this.state.assetsData.map(data => data.realEstate);
     this.assetChart.update();
   }
 
   updateCashflowChart() {
-    this.cashflowChart.data.datasets[0].data = this.state.simulationData.map(item => ({x: item.year, y: item.jobIncome}));
-    this.cashflowChart.data.datasets[1].data = this.state.simulationData.map(item => ({x: item.year, y: item.rentIncome}));
-    this.cashflowChart.data.datasets[2].data = this.state.simulationData.map(item => ({x: item.year, y: item.expenses}));
+    this.cashflowChart.data.datasets[0].data = this.state.cashflowData.map(item => ({x: item.year, y: item.jobIncome}));
+    this.cashflowChart.data.datasets[1].data = this.state.cashflowData.map(item => ({x: item.year, y: item.rentIncome}));
+    this.cashflowChart.data.datasets[2].data = this.state.cashflowData.map(item => ({x: item.year, y: item.expenses}));
     this.cashflowChart.update();
   }
 
@@ -364,8 +365,12 @@ class FinancialPlanner extends React.Component {
             <input id="retirementAccounts" type="number" placeholder="Current savings in retirement accounts" value={this.state.startingPosition.retirementAccounts} onChange={(e) => {const newValue = e.target.value; this.setState(prevState => ({startingPosition: {...prevState.startingPosition, retirementAccounts: newValue}}))}} />
           </div>
           <div className="input-field">
-            <label for="investments">Investments</label>
-            <input id="investments" type="number" placeholder="Current investments" value={this.state.startingPosition.investments} onChange={(e) => {const newValue = e.target.value; this.setState(prevState => ({startingPosition: {...prevState.startingPosition, investments: newValue}}))}} />
+            <label for="Equity investments">Equity Investments</label>
+            <input id="Equity investments" type="number" placeholder="Current Equity investments" value={this.state.startingPosition.equity} onChange={(e) => {const newValue = e.target.value; this.setState(prevState => ({startingPosition: {...prevState.startingPosition, equity: newValue}}))}} />
+          </div>
+          <div className="input-field">
+            <label for="ETF investments">ETF Investments</label>
+            <input id="ETF investments" type="number" placeholder="Current ETF investments" value={this.state.startingPosition.ETFs} onChange={(e) => {const newValue = e.target.value; this.setState(prevState => ({startingPosition: {...prevState.startingPosition, ETFs: newValue}}))}} />
           </div>
           <div className="input-field">
             <label for="currentAge">Current age</label>
@@ -477,11 +482,6 @@ class FinancialPlanner extends React.Component {
 
 }
 
-
-function run(params) {
-  // The body of this function would perform the simulation based on the params and return a result.
-  return 'Simulation result...';
-}
 
 export default FinancialPlanner;
 
