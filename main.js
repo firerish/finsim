@@ -334,37 +334,29 @@ class FinancialPlanner extends React.Component {
     this.updateCashflowChart();
   }
 
-  header() {
-    return (
-        <div class="bg-gradient-to-b from-zinc-900 to-zinc-950 p-3 flex justify-between items-center gap-3 font-light"><div class="text-slate-100 text-xl">Financial Simulator</div><div class="flex justify-center gap-6 z-50"><button class="px-2 py-2 font-semibold text-white bg-black border border-black hover:bg-gray-500">Home</button><button class="px-2 py-2 font-semibold text-white bg-gray-700 border border-white hover:bg-gray-500">Parameters</button><button class="px-2 py-2 font-semibold text-white bg-black border border-black hover:bg-gray-500">Events</button><button class="px-2 py-2 font-semibold text-white bg-black border border-black hover:bg-gray-500">Run Simulation</button><button class="px-2 py-2 font-semibold text-white bg-black border border-black hover:bg-gray-500">Data</button></div><button class="transition duration-300 ease-in-out bg-white text-black border hover:bg-opacity-80 font-medium py-2 px-4 rounded-full">Sign Up</button></div>
-    )
-  }
 
   render() {
     const assets = Object.keys(this.state.economy.assetGrowth);
     const investmentTypes = Object.keys(this.state.allocations.investments);
     const orderOptions = Array.from({length: investmentTypes.length}, (_, i) => i + 1); // Generate order options based on number of types
     const errorBannerClass = this.state.showErrorBanner ? 'show' : 'hide';
-
-    const header = this.header();
-    console.log(header);
+    const [activeTab, setActiveTab] = React.useState("Events");
 
     return (
-
-      <div className="bg-gradient-to-b from-zinc-900 to-zinc-950 p-3 flex justify-between items-center gap-3 font-light">
-        <div className="text-slate-100 text-xl">Financial Simulator</div>
-        <div className="flex justify-center gap-6 z-50">
-          <button className="px-2 py-2 font-semibold text-white bg-black border border-black hover:bg-gray-500">Home</button>
-          <button className="px-2 py-2 font-semibold text-white bg-gray-700 border border-white hover:bg-gray-500">Parameters</button>
-          <button className="px-2 py-2 font-semibold text-white bg-black border border-black hover:bg-gray-500">Events</button>
-          <button className="px-2 py-2 font-semibold text-white bg-black border border-black hover:bg-gray-500">Run Simulation</button>
-          <button className="px-2 py-2 font-semibold text-white bg-black border border-black hover:bg-gray-500">Data</button>
-        </div>
-        <button className="transition duration-300 ease-in-out bg-white text-black border hover:bg-opacity-80 font-medium py-2 px-4 rounded-full">Sign Up</button>
-      </div>
-
-
       <div className="container">
+        <NavBar
+          logo="Financial Simulator"
+          links={[
+            { text: "Home" },
+            { text: "Parameters" },
+            { text: "Events" },
+            { text: "Run Simulation" },
+            { text: "Data" },
+          ]}
+          cta={{ text: "Sign Up", url: "/signup" }}
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+        />
 
         {this.state.errors.length > 0 && (
           <button className="error-icon" onClick={this.toggleErrorBanner}>⚠️</button>
