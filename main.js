@@ -6,7 +6,7 @@ class FinancialPlanner extends React.Component {
     this.resetState = this.resetState.bind(this);
     this.assetChartRef = React.createRef();
     this.cashflowChartRef = React.createRef();
-    this.simulator = new FinancialSimulator();
+    // this.simulator = new FinancialSimulator();
   }
 
   getInitialState() {
@@ -70,7 +70,7 @@ class FinancialPlanner extends React.Component {
         forecast: '',
         assetsData: [], // Array to hold the data for the assets chart
         cashFlowData: [], // Array to hold the data for the cash flow chart
-      }
+      },
 
       errors: [], // Array to hold error messages
       showErrorBanner: false // To control the visibility of the error banner
@@ -334,12 +334,19 @@ class FinancialPlanner extends React.Component {
     this.updateCashflowChart();
   }
 
+  header() {
+    return (
+        <header class="bg-gradient-to-b from-zinc-900 to-zinc-950 p-3 flex justify-between items-center gap-3 font-light"><div class="text-slate-100 text-xl">Financial Simulator</div><div class="flex justify-center gap-6 z-50"><button class="px-2 py-2 font-semibold text-white bg-black border border-black hover:bg-gray-500">Home</button><button class="px-2 py-2 font-semibold text-white bg-gray-700 border border-white hover:bg-gray-500">Parameters</button><button class="px-2 py-2 font-semibold text-white bg-black border border-black hover:bg-gray-500">Events</button><button class="px-2 py-2 font-semibold text-white bg-black border border-black hover:bg-gray-500">Run Simulation</button><button class="px-2 py-2 font-semibold text-white bg-black border border-black hover:bg-gray-500">Data</button></div><button class="transition duration-300 ease-in-out bg-white text-black border hover:bg-opacity-80 font-medium py-2 px-4 rounded-full">Sign Up</button></header>
+    )
+  }
 
   render() {
     const assets = Object.keys(this.state.economy.assetGrowth);
     const investmentTypes = Object.keys(this.state.allocations.investments);
     const orderOptions = Array.from({length: investmentTypes.length}, (_, i) => i + 1); // Generate order options based on number of types
     const errorBannerClass = this.state.showErrorBanner ? 'show' : 'hide';
+
+    // header = this.header();
 
     return (
       <div className="container">
