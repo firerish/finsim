@@ -364,40 +364,40 @@ class FinancialPlanner extends React.Component {
         <h3>Starting position</h3>
         <div className="input-section">
           <div className="input-field">
-            <label for="currentSavings">Savings in cash</label>
-            <input id="currentSavings" type="number" placeholder="Current savings in cash" value={this.state.startingPosition.currentSavings} onChange={(e) => {const newValue = e.target.value; this.setState(prevState => ({startingPosition: {...prevState.startingPosition, currentSavings: newValue}}))}} />
+            <label>Savings in cash</label>
+            <input type="number" placeholder="Current savings in cash" value={this.state.startingPosition.currentSavings} onChange={(e) => {const newValue = e.target.value; this.setState(prevState => ({startingPosition: {...prevState.startingPosition, currentSavings: newValue}}))}} />
           </div>
           <div className="input-field">
-            <label for="retirementAccounts">Retirement accounts</label>
-            <input id="retirementAccounts" type="number" placeholder="Current savings in retirement accounts" value={this.state.startingPosition.retirementAccounts} onChange={(e) => {const newValue = e.target.value; this.setState(prevState => ({startingPosition: {...prevState.startingPosition, retirementAccounts: newValue}}))}} />
+            <label>Retirement accounts</label>
+            <input type="number" placeholder="Current savings in retirement accounts" value={this.state.startingPosition.retirementAccounts} onChange={(e) => {const newValue = e.target.value; this.setState(prevState => ({startingPosition: {...prevState.startingPosition, retirementAccounts: newValue}}))}} />
           </div>
           <div className="input-field">
-            <label for="Equity investments">Equity Investments</label>
-            <input id="Equity investments" type="number" placeholder="Current Equity investments" value={this.state.startingPosition.equity} onChange={(e) => {const newValue = e.target.value; this.setState(prevState => ({startingPosition: {...prevState.startingPosition, equity: newValue}}))}} />
+            <label>Equity Investments</label>
+            <input type="number" placeholder="Current Equity investments" value={this.state.startingPosition.equity} onChange={(e) => {const newValue = e.target.value; this.setState(prevState => ({startingPosition: {...prevState.startingPosition, equity: newValue}}))}} />
           </div>
           <div className="input-field">
-            <label for="ETF investments">ETF Investments</label>
-            <input id="ETF investments" type="number" placeholder="Current ETF investments" value={this.state.startingPosition.ETFs} onChange={(e) => {const newValue = e.target.value; this.setState(prevState => ({startingPosition: {...prevState.startingPosition, ETFs: newValue}}))}} />
+            <label>ETF Investments</label>
+            <input type="number" placeholder="Current ETF investments" value={this.state.startingPosition.ETFs} onChange={(e) => {const newValue = e.target.value; this.setState(prevState => ({startingPosition: {...prevState.startingPosition, ETFs: newValue}}))}} />
           </div>
           <div className="input-field">
-            <label for="currentAge">Current age</label>
-            <input id="currentAge" type="number" placeholder="Current age" value={this.state.startingPosition.currentAge} onChange={(e) => {const newValue = e.target.value; this.setState(prevState => ({startingPosition: {...prevState.startingPosition, currentAge: newValue}}))}} />
+            <label>Current age</label>
+            <input type="number" placeholder="Current age" value={this.state.startingPosition.currentAge} onChange={(e) => {const newValue = e.target.value; this.setState(prevState => ({startingPosition: {...prevState.startingPosition, currentAge: newValue}}))}} />
           </div>
         </div>
 
         <h3>Targets</h3>
         <div className="input-section">
           <div className="input-field">
-            <label for="retirementAge">Retirement Age</label>
-            <input id="retirementAge" type="number" placeholder="Target retirement age" value={this.state.targets.retirementAge} onChange={(e) => {const newValue = e.target.value; this.setState(prevState => ({targets: {...prevState.targets, retirementAge: newValue}}))}} />
+            <label>Retirement Age</label>
+            <input type="number" placeholder="Target retirement age" value={this.state.targets.retirementAge} onChange={(e) => {const newValue = e.target.value; this.setState(prevState => ({targets: {...prevState.targets, retirementAge: newValue}}))}} />
           </div>
           <div className="input-field">
-            <label for="targetAge">Target age</label>
-            <input id="targetAge" type="number" placeholder="Target final age" value={this.state.targets.finalAge} onChange={(e) => {const newValue = e.target.value; this.setState(prevState => ({targets: {...prevState.targets, finalAge: newValue}}))}} />
+            <label>Target age</label>
+            <input type="number" placeholder="Target final age" value={this.state.targets.finalAge} onChange={(e) => {const newValue = e.target.value; this.setState(prevState => ({targets: {...prevState.targets, finalAge: newValue}}))}} />
           </div>
           <div className="input-field">
-            <label for="emergencyStash">Target emergency stash</label>
-            <input id="emergencyStash" type="number" placeholder="Target cash savings" value={this.state.targets.targetSavings} onChange={(e) => {const newValue = e.target.value; this.setState(prevState => ({targets: {...prevState.targets, targetSavings: newValue}}))}} />
+            <label>Target emergency stash</label>
+            <input type="number" placeholder="Target cash savings" value={this.state.targets.targetSavings} onChange={(e) => {const newValue = e.target.value; this.setState(prevState => ({targets: {...prevState.targets, targetSavings: newValue}}))}} />
           </div>
         </div>
 
@@ -405,9 +405,9 @@ class FinancialPlanner extends React.Component {
         <div className="input-section">
           {investmentTypes.map(type => (
             <div key={type} className="input-field">
-              <label for={type}>{type}</label>
+              <label>{type}</label>
               <div>
-                <input id={type} type="number" placeholder="Investment (%)" value={this.state.allocations.investments[type]} onChange={this.handleInvestmentChange.bind(this, type)} />
+                <input type="number" placeholder="Investment (%)" value={this.state.allocations.investments[type]} onChange={this.handleInvestmentChange.bind(this, type)} />
                 {/* drawdown order... */}
                 <select value={this.state.allocations.drawdownOrder[type]} onChange={this.handleDrawdownOrderChange.bind(this, type)}>
                   {orderOptions.map((option, index) => <option key={index} value={option}>{option}</option>)}
@@ -420,13 +420,13 @@ class FinancialPlanner extends React.Component {
         <h3>Economy parameters</h3>
         <div className="input-section">
           <div className="input-field">
-            <label for="inflation">Inflation</label>
-            <input id="inflation" type="number" placeholder="Inflation Rate (%)" value={this.state.economy.inflation} onChange={(e) => {const newValue = e.target.value; this.setState(prevState => ({economy: {...prevState.economy, inflation: newValue}}))}} />
+            <label>Inflation</label>
+            <input type="number" placeholder="Inflation Rate (%)" value={this.state.economy.inflation} onChange={(e) => {const newValue = e.target.value; this.setState(prevState => ({economy: {...prevState.economy, inflation: newValue}}))}} />
           </div>
           {assets.map(asset => (
             <div key={asset} className="input-field">
-              <label for={asset}>{asset}</label>
-              <input id={asset} type="number" placeholder="Growth (%)" value={this.state.economy.assetGrowth[asset]} onChange={this.handleAssetGrowthChange.bind(this, asset)} />
+              <label>{asset}</label>
+              <input type="number" placeholder="Growth (%)" value={this.state.economy.assetGrowth[asset]} onChange={this.handleAssetGrowthChange.bind(this, asset)} />
               <input type="number" placeholder="Variance (%)" value={this.state.economy.assetVariance[asset]} onChange={this.handleAssetVarianceChange.bind(this, asset)} />
             </div>
           ))}
