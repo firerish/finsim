@@ -236,15 +236,15 @@ class FinancialPlanner extends React.Component {
     this.assetChart = new Chart(ctx, {
       type: 'line',
       data: {
-        labels: this.state.assetsData.map(data => data.year),
+        labels: (this.state.assetsData || []).map(data => data.year),
         datasets: [{
           label: 'Cash',
-          data: this.state.assetsData.map(data => data.cash),
+          data: (this.state.assetsData || []).map(data => data.cash),
           borderColor: '#8884d8',
           fill: false
         }, {
           label: 'Real Estate',
-          data: this.state.assetsData.map(data => data.realEstate),
+          data: (this.state.assetsData || []).map(data => data.realEstate),
           borderColor: '#82ca9d',
           fill: false
         }]
@@ -275,17 +275,17 @@ class FinancialPlanner extends React.Component {
       data: {
         datasets: [{
           label: 'Job Income',
-          data: this.state.cashflowData.map(item => ({x: item.year, y: item.jobIncome})),
+          data: (this.state.cashflowData || []).map(item => ({x: item.year, y: item.jobIncome})),
           backgroundColor: '#8884d8',
           fill: 'origin',
         }, {
           label: 'Rent Income',
-          data: this.state.cashflowData.map(item => ({x: item.year, y: item.rentIncome})),
+          data: (this.state.cashflowData || []).map(item => ({x: item.year, y: item.rentIncome})),
           backgroundColor: '#82ca9d',
           fill: '-1',
         }, {
           label: 'Expenses',
-          data: this.state.cashflowData.map(item => ({x: item.year, y: item.expenses})),
+          data: (this.state.cashflowData || []).map(item => ({x: item.year, y: item.expenses})),
           backgroundColor: '#ff7300',
           borderDash: [5, 5],
           fill: false,
@@ -336,7 +336,7 @@ class FinancialPlanner extends React.Component {
 
   header() {
     return (
-        <header class="bg-gradient-to-b from-zinc-900 to-zinc-950 p-3 flex justify-between items-center gap-3 font-light"><div class="text-slate-100 text-xl">Financial Simulator</div><div class="flex justify-center gap-6 z-50"><button class="px-2 py-2 font-semibold text-white bg-black border border-black hover:bg-gray-500">Home</button><button class="px-2 py-2 font-semibold text-white bg-gray-700 border border-white hover:bg-gray-500">Parameters</button><button class="px-2 py-2 font-semibold text-white bg-black border border-black hover:bg-gray-500">Events</button><button class="px-2 py-2 font-semibold text-white bg-black border border-black hover:bg-gray-500">Run Simulation</button><button class="px-2 py-2 font-semibold text-white bg-black border border-black hover:bg-gray-500">Data</button></div><button class="transition duration-300 ease-in-out bg-white text-black border hover:bg-opacity-80 font-medium py-2 px-4 rounded-full">Sign Up</button></header>
+        <div class="bg-gradient-to-b from-zinc-900 to-zinc-950 p-3 flex justify-between items-center gap-3 font-light"><div class="text-slate-100 text-xl">Financial Simulator</div><div class="flex justify-center gap-6 z-50"><button class="px-2 py-2 font-semibold text-white bg-black border border-black hover:bg-gray-500">Home</button><button class="px-2 py-2 font-semibold text-white bg-gray-700 border border-white hover:bg-gray-500">Parameters</button><button class="px-2 py-2 font-semibold text-white bg-black border border-black hover:bg-gray-500">Events</button><button class="px-2 py-2 font-semibold text-white bg-black border border-black hover:bg-gray-500">Run Simulation</button><button class="px-2 py-2 font-semibold text-white bg-black border border-black hover:bg-gray-500">Data</button></div><button class="transition duration-300 ease-in-out bg-white text-black border hover:bg-opacity-80 font-medium py-2 px-4 rounded-full">Sign Up</button></div>
     )
   }
 
@@ -346,9 +346,24 @@ class FinancialPlanner extends React.Component {
     const orderOptions = Array.from({length: investmentTypes.length}, (_, i) => i + 1); // Generate order options based on number of types
     const errorBannerClass = this.state.showErrorBanner ? 'show' : 'hide';
 
-    // header = this.header();
+    const header = this.header();
+    console.log(header);
 
     return (
+
+      <div className="bg-gradient-to-b from-zinc-900 to-zinc-950 p-3 flex justify-between items-center gap-3 font-light">
+        <div className="text-slate-100 text-xl">Financial Simulator</div>
+        <div className="flex justify-center gap-6 z-50">
+          <button className="px-2 py-2 font-semibold text-white bg-black border border-black hover:bg-gray-500">Home</button>
+          <button className="px-2 py-2 font-semibold text-white bg-gray-700 border border-white hover:bg-gray-500">Parameters</button>
+          <button className="px-2 py-2 font-semibold text-white bg-black border border-black hover:bg-gray-500">Events</button>
+          <button className="px-2 py-2 font-semibold text-white bg-black border border-black hover:bg-gray-500">Run Simulation</button>
+          <button className="px-2 py-2 font-semibold text-white bg-black border border-black hover:bg-gray-500">Data</button>
+        </div>
+        <button className="transition duration-300 ease-in-out bg-white text-black border hover:bg-opacity-80 font-medium py-2 px-4 rounded-full">Sign Up</button>
+      </div>
+
+
       <div className="container">
 
         {this.state.errors.length > 0 && (
@@ -466,7 +481,7 @@ class FinancialPlanner extends React.Component {
         <h3>Simulation Result</h3>
         <div className="output-section">
 
-          <p>{this.state.simulationResult}</p>
+          <p>{this.state.simulationResult.forecast}</p>
 
           <h3>Assets</h3>
 
